@@ -270,41 +270,4 @@ console.log(foo(5));</code></pre>
     <div class="warning">
       <p><em>here be dragons</em></p>
     </div>
-
-    <h2>Mermaid</h2>
-
-    <pre>
-      <code class="language-mermaid">
-        graph LR
-            A[Square Rect] -- Link text --> B((Circle))
-            A --> C(Round Rect)
-            B --> D{Rhombus}
-            C --> D
-      </code>
-    </pre>
-
-    <pre>
-      <code class="language-mermaid">
-        pie title What Voldemort doesn't have?
-          "FRIENDS" : 2
-          "FAMILY" : 3
-          "NOSE" : 45
-      </code>
-    </pre>
-
-    <pre>
-      <code class="language-mermaid">
-        sequenceDiagram
-          participant Alice
-          participant Bob
-          Alice->>John: Hello John, how are you?
-          loop HealthCheck
-              John->>John: Fight against hypochondria
-          end
-          Note right of John: Rational thoughts&lt;br/>prevail...
-          John-->>Alice: Great!
-          John->>Bob: How about you?
-          Bob-->>John: Jolly good!
-      </code>
-    </pre>
   `;

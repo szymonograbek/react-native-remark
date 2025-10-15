@@ -17,7 +17,6 @@
     "react": "19.0.0",
     "react-native": "0.79.4",
     "react-native-remark": "file:../",
-    "react-native-webview": "^13.16.0",
     "rehype-parse": "^9.0.1",
     "rehype-remark": "^10.0.1"
   },

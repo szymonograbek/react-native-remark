@@ -32,9 +32,6 @@ importers:
       react-native-remark:
         specifier: file:../
         version: file:..(expo-font@13.3.1(expo@53.0.12(@babel/core@7.27.4)(react-native-webview@13.16.0(react-native@0.79.4(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
-      react-native-webview:
-        specifier: ^13.16.0
-        version: 13.16.0(react-native@0.79.4(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       rehype-parse:
         specifier: ^9.0.1
         version: 9.0.1
@@ -6288,6 +6285,7 @@ snapshots:
       invariant: 2.2.4
       react: 19.0.0
       react-native: 0.79.4(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0)
+    optional: true
 
   react-native@0.79.4(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0):
     dependencies:

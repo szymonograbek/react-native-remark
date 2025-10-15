@@ -2,12 +2,7 @@ import {
   ActionSheetProvider,
   useActionSheet,
 } from "@expo/react-native-action-sheet";
-import {
-  Markdown,
-  defaultRenderers,
-  remarkParse,
-  themes,
-} from "@react-native-remark";
+import { Markdown, themes } from "@react-native-remark";
 import {
   createStaticNavigation,
   useNavigation,
@@ -27,12 +22,9 @@ import rehypeParse from "rehype-parse";
 import rehypeRemark from "rehype-remark";
 import { PluggableList } from "unified";
 
-import Mermaid from "./components/Mermaid";
 import { sampleHTML } from "./samples/html";
-import { mermaidMarkdown } from "./samples/mermaid";
 
 const { defaultTheme, githubTheme, serifTheme } = themes;
-const { CodeRenderer } = defaultRenderers;
 
 const BASE_URL =
   "https://raw.githubusercontent.com/imwithye/react-native-remark/refs/heads/main/markdown";
@@ -132,11 +124,7 @@ const HomeScreen = () => {
                 url: "html-sample",
               },
               {
-                title: "6. Mermaid",
-                url: "mermaid-markdown",
-              },
-              {
-                title: "7. Load from URL",
+                title: "6. Load from URL",
                 url: "",
               },
             ];
@@ -152,12 +140,6 @@ const HomeScreen = () => {
                 if (options[idx].url === "html-sample") {
                   setMarkdown(sampleHTML);
                   setPlugins([rehypeParse, rehypeRemark]);
-                  return;
-                }
-
-                if (options[idx].url === "mermaid-markdown") {
-                  setMarkdown(mermaidMarkdown);
-                  setPlugins([remarkParse]);
                   return;
                 }
 
@@ -206,15 +188,6 @@ const HomeScreen = () => {
           markdown={markdown}
           theme={theme}
           remarkPlugins={plugins}
-          customRenderers={{
-            CodeRenderer: (props) => {
-              if (props.node.lang === "mermaid") {
-                return <Mermaid value={props.node.value} />;
-              }
-
-              return CodeRenderer(props);
-            },
-          }}
           onLinkPress={(url) => Linking.openURL(url)}
         />
       )}
