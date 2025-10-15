@@ -2,15 +2,19 @@ import {
   ActionSheetProvider,
   useActionSheet,
 } from "@expo/react-native-action-sheet";
-import { Markdown } from "@react-native-remark";
-import { themes } from "@react-native-remark";
+import {
+  Markdown,
+  defaultRenderers,
+  remarkParse,
+  themes,
+} from "@react-native-remark";
 import {
   createStaticNavigation,
   useNavigation,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -19,8 +23,16 @@ import {
   ScrollView,
   useColorScheme,
 } from "react-native";
+import rehypeParse from "rehype-parse";
+import rehypeRemark from "rehype-remark";
+import { PluggableList } from "unified";
+
+import Mermaid from "./components/Mermaid";
+import { sampleHTML } from "./samples/html";
+import { mermaidMarkdown } from "./samples/mermaid";
 
 const { defaultTheme, githubTheme, serifTheme } = themes;
+const { CodeRenderer } = defaultRenderers;
 
 const BASE_URL =
   "https://raw.githubusercontent.com/imwithye/react-native-remark/refs/heads/main/markdown";
@@ -30,10 +42,23 @@ const HomeScreen = () => {
   const colorScheme = useColorScheme();
   const navigation = useNavigation();
   const { showActionSheetWithOptions } = useActionSheet();
-  const [url, setUrl] = useState(URL);
   const [markdown, setMarkdown] = useState("");
   const [theme, setTheme] = useState(defaultTheme);
   const [loading, setLoading] = useState(false);
+  const [plugins, setPlugins] = useState<PluggableList>();
+
+  const loadMarkdown = useCallback((url: string) => {
+    setLoading(true);
+
+    const controller = new AbortController();
+
+    fetch(url, { signal: controller.signal })
+      .then((res) => res.text())
+      .then((text) => setMarkdown(text))
+      .finally(() => setTimeout(() => setLoading(false), 1000));
+
+    return controller;
+  }, []);
 
   useEffect(() => {
     navigation.setOptions({
@@ -103,7 +128,15 @@ const HomeScreen = () => {
                 url: `${BASE_URL}/04_pytorch.md`,
               },
               {
-                title: "5. Load from URL",
+                title: "5. HTML",
+                url: "html-sample",
+              },
+              {
+                title: "6. Mermaid",
+                url: "mermaid-markdown",
+              },
+              {
+                title: "7. Load from URL",
                 url: "",
               },
             ];
@@ -115,28 +148,47 @@ const HomeScreen = () => {
               },
               (idx?: number) => {
                 if (!idx || idx === cancelButtonIndex) return;
+
+                if (options[idx].url === "html-sample") {
+                  setMarkdown(sampleHTML);
+                  setPlugins([rehypeParse, rehypeRemark]);
+                  return;
+                }
+
+                if (options[idx].url === "mermaid-markdown") {
+                  setMarkdown(mermaidMarkdown);
+                  setPlugins([remarkParse]);
+                  return;
+                }
+
                 if (idx === options.length - 1) {
                   Alert.prompt("Load Markdown from URL", "", (url) => {
-                    setUrl(url);
+                    loadMarkdown(url);
                   });
                   return;
                 }
-                setUrl(options[idx].url);
+
+                setPlugins(undefined);
+                loadMarkdown(options[idx].url);
               },
             );
           }}
         />
       ),
     });
-  }, [colorScheme, navigation, showActionSheetWithOptions, setTheme, setUrl]);
+  }, [
+    colorScheme,
+    navigation,
+    showActionSheetWithOptions,
+    setTheme,
+    loadMarkdown,
+  ]);
 
   useEffect(() => {
-    setLoading(true);
-    fetch(url)
-      .then((res) => res.text())
-      .then((text) => setMarkdown(text))
-      .finally(() => setTimeout(() => setLoading(false), 1000));
-  }, [url]);
+    const controller = loadMarkdown(URL);
+
+    return controller.abort;
+  }, [loadMarkdown]);
 
   return (
     <ScrollView
@@ -153,6 +205,16 @@ const HomeScreen = () => {
         <Markdown
           markdown={markdown}
           theme={theme}
+          remarkPlugins={plugins}
+          customRenderers={{
+            CodeRenderer: (props) => {
+              if (props.node.lang === "mermaid") {
+                return <Mermaid value={props.node.value} />;
+              }
+
+              return CodeRenderer(props);
+            },
+          }}
           onLinkPress={(url) => Linking.openURL(url)}
         />
       )}
